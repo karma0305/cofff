@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>COF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .friends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
+        }
+
+        .friend-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            width: 100%;
+            height: 500px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            perspective: 1000px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .friend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .friend-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 25px;
+            box-sizing: border-box;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .friend-name {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .friend-birthday {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .friend-course {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .friend-location {
+            color: #555;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .friend-location a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .friend-location a:hover {
+            text-decoration: underline;
+            color: #764ba2;
+        }
+
+        .friend-quote {
+            font-style: italic;
+            color: #555;
+            font-size: 1em;
+            line-height: 1.4;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .quote-mark {
+            font-size: 1.5em;
+            color: #667eea;
+        }
+
+        .social-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-links img {
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-links img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Back side specific styles */
+        .card-back h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .back-info {
+            text-align: left;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .back-info p {
+            margin-bottom: 10px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .back-info strong {
+            color: #667eea;
+        }
+
+        .flip-instruction {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #888;
+            font-size: 0.8em;
+            background: rgba(255,255,255,0.8);
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            
+            .friends-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .friend-card {
+                margin: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>COF</h1>
+        
+        <div class="friends-grid">
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="mart.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Martiniel Soriano</div>
+                        <div class="friend-birthday">March 05, 2006</div>
+                        <div class="friend-course">Bachelor of Science in Computer Science</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/San+Marino+City+Subdivision/@14.3243825,120.982644,18.5z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span>ako lang ata yung lalaking nanonood ng conjuring at may pake sa flood control, I love matcha btw<span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Martiniel</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Pisces</p>
+                            <p><strong>Favorite Drink:</strong> Coke Zero</p>
+                            <p><strong>What I don't like:</strong> Cheater Nigga</p>
+                            <p><strong>Favorite Song:</strong> About You</p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/heyitskarma" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/hey.k4rma/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="sam.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Samantha Estilo</div>
+                        <div class="friend-birthday">November 30, 2007</div>
+                        <div class="friend-course">Bachelor of Science in Civil Engineering</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/San+Marino+City+Subdivision/@14.3243825,120.982644,18.5z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span>mamamatay rin naman, bakit hindi ka pa mauna?<span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Samantha</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Sagittarius</p>
+                            <p><strong>Favorite Drink:</strong> </p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong> </p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/samanthaestilo011" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/samanthaestilo_/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="yuri.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Yuri Rapas</div>
+                        <div class="friend-birthday">December 04, 2007</div>
+                        <div class="friend-course">Bachelor of Science in Computer Engineering</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/Fairway+View+by+Filinvest/@14.3499133,120.9710856,19z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span>konting bato, konting semento, monumento<span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Yuri</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Sagittarius</p>
+                            <p><strong>Favorite Drink:</strong> </p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong> </p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/1up.yori" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/yuri.xry/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="trisha.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Trisha Mae Mecate</div>
+                        <div class="friend-birthday">March 19, 2008</div>
+                        <div class="friend-course">Bachelor of Arts</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/Golden+city+salawag+dasmarinas+cavite/@14.3415364,120.9640002,15z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span>Di baleng wala, kesa mali<span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Trisha</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Pisces</p>
+                            <p><strong>Favorite Drink:</strong> </p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong> </p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/trisha.mecate" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/trishaaaa.19/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="juls.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Julius Calatrava</div>
+                        <div class="friend-birthday">September 21, 2008</div>
+                        <div class="friend-course">Bachelor of Fine Arts in Film Making</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/Golden+city+salawag+dasmarinas+cavite/@14.3415364,120.9640002,15z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span><span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Julius</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Virgo</p>
+                            <p><strong>Favorite Drink:</strong></p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong></p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/jls.cltrv" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/_jls.cltrv/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="sachie.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Sachieco Cuazon</div>
+                        <div class="friend-birthday">October 21, 2007</div>
+                        <div class="friend-course">Bachelor of Arts</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/Golden+city+salawag+dasmarinas+cavite/@14.3415364,120.9640002,15z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span><span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Sachieco</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Libra</p>
+                            <p><strong>Favorite Drink:</strong> </p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong> </p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/sachieco.cuazon" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/zdvsach/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="gino.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Richdon Gino Raguirag</div>
+                        <div class="friend-birthday">March 14, 2008</div>
+                        <div class="friend-course">Bachelor of Science</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/San+Marino+City+Subdivision/@14.3243825,120.982644,18.5z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span><span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Gino</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Pisces</p>
+                            <p><strong>Favorite Drink:</strong></p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong> </p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/richdongino.raguirag.7" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/ginoraguirag/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="chanel.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Chanel Vadillo</div>
+                        <div class="friend-birthday">November 17, 2007</div>
+                        <div class="friend-course">Bachelor of Arts</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/San+Marino+City+Subdivision/@14.3243825,120.982644,18.5z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span><span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Chanel</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Scorpio</p>
+                            <p><strong>Favorite Drink:</strong> </p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong></p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/chanel.antonette.2024" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="http://instagram.com/urluv_chan/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="jeth.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Jethro Pana</div>
+                        <div class="friend-birthday">May 15, 2006</div>
+                        <div class="friend-course">Bachelor of Science in Tourism</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/Golden+city+salawag+dasmarinas+cavite/@14.3415364,120.9640002,15z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span><span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Jethro</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Taurus</p>
+                            <p><strong>Favorite Drink:</strong> Coke Zero</p>
+                            <p><strong>What I don't like:</strong> U</p>
+                            <p><strong>Favorite Song:</strong> About You</p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/jethro.ayonayon" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/_datboii.sike/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="sheainah.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Sheainah Orlanda</div>
+                        <div class="friend-birthday">December 07, 2007</div>
+                        <div class="friend-course">Bachelor of Arts</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/San+Marino+City+Subdivision/@14.3243825,120.982644,18.5z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span><span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Sheainah</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Sagittarius</p>
+                            <p><strong>Favorite Drink:</strong></p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong> </p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/sheainahsheresh.orlanda.1" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/xieeaah/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="henry.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">John Henry Lazaro</div>
+                        <div class="friend-birthday">July 24, 2007</div>
+                        <div class="friend-course">Bachelor of Science in Information Systems</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/Golden+city+salawag+dasmarinas+cavite/@14.3415364,120.9640002,15z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span>pag ayaw ni misis, ayaw ko rin<span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About John Henry</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Leo </p>
+                            <p><strong>Favorite Drink:</strong> Iced Coffee</p>
+                            <p><strong>What I don't like:</strong> Mga ayaw ni misis </p>
+                            <p><strong>Favorite Song:</strong> River - Charlie Puth</p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/johnhenry.b.lazaro" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/henrynothenru/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="luiza.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Luiza Padasay</div>
+                        <div class="friend-birthday">November 08, 2007</div>
+                        <div class="friend-course">Bachelor of Culinary Arts</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/Viva+Homes+Subdivision/@14.3368911,120.9834794,17z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span><span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Luiza</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Scorpio</p>
+                            <p><strong>Favorite Drink:</strong> </p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong> </p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/luiza.padasay" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/lu.izay/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="josh.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Josh Santos</div>
+                        <div class="friend-birthday">January 25, 2009</div>
+                        <div class="friend-course">Bachelor of Science</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/Golden+city+salawag+dasmarinas+cavite/@14.3415364,120.9640002,15z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span><span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Josh</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Aquarius</p>
+                            <p><strong>Favorite Drink:</strong> </p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong> </p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/Josh.chromaticz" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/crazyjosh1e/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="kris.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Kris Guerrero</div>
+                        <div class="friend-birthday">December 09, 2007</div>
+                        <div class="friend-course">Bachelor of Science in Accountancy</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/Marilao,+Bulakan/@14.7700228,120.9335655,13z" target="_blank">Marilao, Bulacan</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span><span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Kris</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Sagittarius</p>
+                            <p><strong>Favorite Drink:</strong></p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong> </p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/kris.guerrero.9277" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/hshajsa_idk/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="friend-card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="jas.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;">
+                        <div class="friend-name">Jasler Junio</div>
+                        <div class="friend-birthday">July 16, 2008</div>
+                        <div class="friend-course">Bachelor of Science</div>
+                        <div class="friend-location">
+                            📍 <a href="https://www.google.com/maps/place/Viva+Homes+Subdivision/@14.3368911,120.9834794,17z" target="_blank">Dasmariñas, Cavite</a>
+                        </div>
+                        <div class="friend-quote">
+                            <span class="quote-mark">"</span><span class="quote-mark">"</span>
+                        </div>
+                        <div class="flip-instruction">Click to flip!</div>
+                    </div>
+                    <div class="card-back">
+                        <h3>More About Jasler</h3>
+                        <div class="back-info">
+                            <p><strong>Zodiac Sign:</strong> Cancer</p>
+                            <p><strong>Favorite Drink:</strong></p>
+                            <p><strong>What I don't like:</strong> </p>
+                            <p><strong>Favorite Song:</strong> </p>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/jasler.junio.2024" target="_blank">
+                                <img src="fb logo.png" width="50" height="50">
+                            </a>
+                            <a href="https://www.instagram.com/ur.n1jaz/" target="_blank">
+                                <img src="ig logo.png" width="50" height="50">
+                            </a>
+                        </div>
+                        <div class="flip-instruction">Click to flip back!</div>
+                    </div>
+                </div>
+            </div>
+        
+        
+        </div>
+    </div>
+    <script>
+        function flipCard(card) {
+        card.classList.toggle('flipped');
+                                }
+</script>
+</body>
+</html>
